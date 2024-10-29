@@ -1,13 +1,13 @@
+/// <reference types="vitest/config" />
+import type { BuildOptions } from 'vite'
 import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-/// <reference types="vitest/config" />
-import Unocss from 'unocss/vite'
+import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
-// import { presetUno, presetAttributify, presetIcons } from "unocss";
 
-const rollupOptions = {
-  external: ['vue', 'vue-router'],
+const rollupOptions: BuildOptions['rollupOptions'] = {
+  external: ['vue'], // 将这些模块保留在 bundle 之外
   output: {
     globals: {
       vue: 'Vue',
@@ -15,21 +15,19 @@ const rollupOptions = {
     exports: 'named',
   },
 }
-
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueJsx(), Unocss()],
+  plugins: [vue(), vueJsx(), UnoCSS()],
   resolve: {
     alias: {
       vue: 'vue/dist/vue.esm-bundler',
     },
   },
   test: {
-    // enable jest-like global test APIs
     globals: true,
-    // simulate DOM with happy-dom
-    // (requires installing happy-dom as a peer dependency)
     environment: 'happy-dom',
   },
+
   build: {
     rollupOptions,
     minify: 'terser', // boolean | 'terser' | 'esbuild'
