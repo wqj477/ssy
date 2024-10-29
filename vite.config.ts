@@ -6,15 +6,6 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
 
-const rollupOptions: BuildOptions['rollupOptions'] = {
-  external: ['vue'], // 将这些模块保留在 bundle 之外
-  output: {
-    globals: {
-      vue: 'Vue',
-    },
-    exports: 'named',
-  },
-}
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), vueJsx(), UnoCSS()],
@@ -27,9 +18,16 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
   },
-
   build: {
-    rollupOptions,
+    rollupOptions: {
+      external: ['vue'], // 将这些模块保留在 bundle 之外
+      output: {
+        globals: {
+          vue: 'Vue',
+        },
+        exports: 'named',
+      },
+    },
     minify: 'terser', // boolean | 'terser' | 'esbuild'
     sourcemap: false, // 输出单独 source文件
     reportCompressedSize: true, // 生成压缩大小报告
@@ -38,7 +36,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/entry.ts'),
       name: 'SSYUI',
-      fileName: 'ssy-ui',
+      fileName: format => `ssy-ui.${format}.js`,
       // 导出模块格式
       formats: ['es', 'umd'],
     },
