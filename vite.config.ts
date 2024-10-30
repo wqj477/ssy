@@ -1,33 +1,38 @@
-/// <reference types="vitest/config" />
-import type { BuildOptions } from 'vite'
 import { resolve } from 'node:path'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import UnoCSS from 'unocss/vite'
+/// <reference types="vitest/config" />
+import Unocss from 'unocss/vite'
 import { defineConfig } from 'vite'
 
-// https://vitejs.dev/config/
+// import { presetUno, presetAttributify, presetIcons } from "unocss";
+
+const rollupOptions = {
+  external: ['vue', 'vue-router'],
+  output: {
+    globals: {
+      vue: 'Vue',
+    },
+    exports: 'named',
+  },
+}
+
 export default defineConfig({
-  plugins: [vue(), vueJsx(), UnoCSS()],
+  plugins: [vue(), vueJsx(), Unocss()],
   resolve: {
     alias: {
       vue: 'vue/dist/vue.esm-bundler',
     },
   },
   test: {
+    // enable jest-like global test APIs
     globals: true,
+    // simulate DOM with happy-dom
+    // (requires installing happy-dom as a peer dependency)
     environment: 'happy-dom',
   },
   build: {
-    rollupOptions: {
-      external: ['vue'], // 将这些模块保留在 bundle 之外
-      output: {
-        globals: {
-          vue: 'Vue',
-        },
-        exports: 'named',
-      },
-    },
+    rollupOptions,
     minify: 'terser', // boolean | 'terser' | 'esbuild'
     sourcemap: false, // 输出单独 source文件
     reportCompressedSize: true, // 生成压缩大小报告
@@ -36,7 +41,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/entry.ts'),
       name: 'SSYUI',
-      fileName: format => `ssy-ui.${format}.js`,
+      fileName: 'ssy-ui',
       // 导出模块格式
       formats: ['es', 'umd'],
     },
